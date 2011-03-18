@@ -53,7 +53,7 @@ define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $
     cwd     => "$cwd",
     command => "/usr/bin/wget -q $download",
     timeout => 120, # 2 minutes
-    unless  => "$test -f $creates",
+    unless  => "$test -f $creates || $test -f $cwd/$filename"
   }
   
   exec { "extract-$name":
@@ -88,7 +88,7 @@ define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $
         cwd     => "$cwd",
         command => "/bin/rm -rf $cwd/$foldername",
         require => Exec["make-install-$name"],
-        unless  => "$test -f $creates"
+        onlyif => "$test -d $cwd/$foldername"
       } # exec
     } # true
   } # case
