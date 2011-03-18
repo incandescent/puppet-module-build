@@ -88,6 +88,7 @@ define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $
         cwd     => "$cwd",
         command => "/bin/rm -rf $cwd/$foldername",
         require => Exec["make-install-$name"],
+        unless  => "$test -f $creates"
       } # exec
     } # true
   } # case
