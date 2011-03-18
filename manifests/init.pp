@@ -61,6 +61,7 @@ define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $
     command => "$extractor",
     timeout => 120, # 2 minutes
     require => Exec["download-$name"],
+    unless  => "$test -f $creates"
   }
   
   exec { "config-$name":
@@ -68,6 +69,7 @@ define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $
     command => "$cwd/$foldername/configure $buildoptions",
     timeout => 120, # 2 minutes
     require => Exec["extract-$name"],
+    unless  => "$test -f $creates"
   }
   
   exec { "make-install-$name":
@@ -75,6 +77,7 @@ define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $
     command => "/usr/bin/make $makeopts && /usr/bin/make install $makeinstallopts",
     timeout => 600, # 10 minutes
     require => Exec["config-$name"],
+    unless  => "$test -f $creates"
   }
   
   # remove build folder
