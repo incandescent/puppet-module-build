@@ -28,6 +28,6 @@ h2. Dependencies
 
 h2. Note
 
-All paths are debian/nexenta specific. Please customise it to your needs.
+All paths are redhat/centos/fedora specific. Please customise it to your needs.
 
 Copyright © 2010 qutic development, released under the MIT license

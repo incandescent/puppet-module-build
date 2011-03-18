@@ -5,19 +5,26 @@
 #   creates  => '/usr/local/bin/top',
 # }
 
-define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $pkg_extension="", $buildoptions="", $extractorcmd="", $rm_build_folder=true) {
+define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $pkg_extension="", $buildoptions="", $makeopts="", $makeinstallopts="", $extractorcmd="", $rm_build_folder=true) {
   
-  if defined( Package['build-essential'] ) {
-    debug("Package build-essential already installed")
-  } else {
-    package { 'build-essential': ensure => installed }
-  }
+  if defined( Package['autoconf'] ) { debug("Package autoconf already installed") } else { package { 'autoconf': ensure => installed } }
+  if defined( Package['automake'] ) { debug("Package automake already installed") } else { package { 'automake': ensure => installed } }
+  if defined( Package['binutils'] ) { debug("Package binutils already installed") } else { package { 'binutils': ensure => installed } }
+  if defined( Package['bison'] ) { debug("Package bison already installed") } else { package { 'bison': ensure => installed } }
+  if defined( Package['flex'] ) { debug("Package flex already installed") } else { package { 'flex': ensure => installed } }
+  if defined( Package['gcc'] ) { debug("Package gcc already installed") } else { package { 'gcc': ensure => installed } }
+  if defined( Package['gcc-c++'] ) { debug("Package gcc-c++ already installed") } else { package { 'gcc-c++': ensure => installed } }
+  if defined( Package['gdb'] ) { debug("Package gdb already installed") } else { package { 'gdb': ensure => installed } }
+  if defined( Package['gettext'] ) { debug("Package gettext already installed") } else { package { 'gettext': ensure => installed } }
+  if defined( Package['libtool'] ) { debug("Package libtool already installed") } else { package { 'libtool': ensure => installed } }
+  if defined( Package['make'] ) { debug("Package make already installed") } else { package { 'make': ensure => installed } }
+  if defined( Package['pkgconfig'] ) { debug("Package pkgconfig already installed") } else { package { 'pkgconfig': ensure => installed } }
   
   $cwd    = "/usr/local/src"
   
   $test   = "/usr/bin/test"
   $unzip  = "/usr/bin/unzip"
-  $tar    = "/usr/sbin/tar"
+  $tar    = "/bin/tar"
   $bunzip = "/usr/bin/bunzip2"
   $gunzip = "/usr/bin/gunzip"
   
@@ -65,7 +72,7 @@ define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $
   
   exec { "make-install-$name":
     cwd     => "$cwd/$foldername",
-    command => "/usr/bin/make && /usr/bin/make install",
+    command => "/usr/bin/make $makeopts && /usr/bin/make install $makeinstallopts",
     timeout => 600, # 10 minutes
     require => Exec["config-$name"],
   }
@@ -76,7 +83,7 @@ define build::install ($download, $creates, $pkg_folder='', $pkg_format="tar", $
       notice("remove build folder")
       exec { "remove-$name-build-folder":
         cwd     => "$cwd",
-        command => "/usr/bin/rm -rf $cwd/$foldername",
+        command => "/bin/rm -rf $cwd/$foldername",
         require => Exec["make-install-$name"],
       } # exec
     } # true
